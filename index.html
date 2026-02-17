@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barfi – The Food Magician</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green:   #2b3d2b;
+      --green2:  #344934;
+      --pink:    #f4a7b0;
+      --cream:   #faf7f2;
+      --white:   #ffffff;
+      --dark:    #111111;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ───── NAVBAR ───── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 68px;
+      transition: background 0.4s;
+    }
+
+    .nav-left {
+      display: flex;
+      gap: 2.2rem;
+      align-items: center;
+    }
+
+    .nav-left a, .nav-right a {
+      color: var(--white);
+      text-decoration: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.88;
+      transition: opacity 0.2s;
+    }
+    .nav-left a:hover, .nav-right a:hover { opacity: 1; }
+
+    .nav-logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--white) !important;
+      font-family: 'Cormorant Garamond', serif !important;
+      font-size: 1.5rem !important;
+      font-style: italic;
+      letter-spacing: 0.06em !important;
+      text-transform: none !important;
+      opacity: 1 !important;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+    }
+
+    .nav-order-btn {
+      border: 1.5px solid var(--white);
+      border-radius: 50px;
+      padding: 0.45rem 1.4rem;
+      color: var(--white) !important;
+      font-size: 0.75rem !important;
+      letter-spacing: 0.12em !important;
+      text-transform: uppercase !important;
+      transition: background 0.25s, color 0.25s !important;
+    }
+    .nav-order-btn:hover {
+      background: var(--white);
+      color: var(--green) !important;
+    }
+
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+    }
+    .cart-icon svg { width: 22px; height: 22px; fill: none; stroke: white; stroke-width: 1.8; }
+    .cart-badge {
+      position: absolute;
+      top: -6px; right: -8px;
+      background: var(--pink);
+      color: var(--dark);
+      font-size: 0.6rem;
+      font-weight: 700;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ───── HERO ───── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 640px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Tiled food image grid as background */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 3px;
+      z-index: 0;
+    }
+
+    .hero-bg-cell {
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+
+    .hero-bg-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.55) saturate(0.85);
+      transition: transform 8s ease;
+    }
+    .hero:hover .hero-bg-cell img { transform: scale(1.04); }
+
+    /* Dark overlay */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.28) 0%,
+        rgba(0,0,0,0.15) 40%,
+        rgba(0,0,0,0.35) 100%
+      );
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: heroFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes heroFadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 0.88;
+      letter-spacing: -0.01em;
+      text-shadow: 0 4px 40px rgba(0,0,0,0.4);
+    }
+
+    .hero-title .line1 {
+      font-size: clamp(5rem, 14vw, 12rem);
+      display: block;
+      animation: slideUp 0.9s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-title .line2 {
+      font-size: clamp(2.8rem, 7.5vw, 6.5rem);
+      display: block;
+      animation: slideUp 0.9s 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-sub {
+      margin-top: 1.2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 2.2vw, 1.35rem);
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      animation: slideUp 0.9s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-sub .spark {
+      font-style: normal;
+      font-size: 0.7em;
+      color: var(--pink);
+    }
+
+    .hero-buttons {
+      margin-top: 2.8rem;
+      display: flex;
+      gap: 1rem;
+      animation: slideUp 0.9s 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-btn {
+      border: 1.5px solid rgba(255,255,255,0.85);
+      border-radius: 50px;
+      padding: 0.75rem 2.2rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .hero-btn-outline {
+      background: transparent;
+      color: var(--white);
+    }
+    .hero-btn-outline:hover {
+      background: var(--white);
+      color: var(--dark);
+      border-color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+    }
+
+    .hero-btn-fill {
+      background: var(--white);
+      color: var(--dark);
+      border-color: var(--white);
+    }
+    .hero-btn-fill:hover {
+      background: transparent;
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+    }
+
+    /* ───── TICKER BAR ───── */
+    .ticker-wrap {
+      background: var(--pink);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 0.72rem 0;
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .ticker-track {
+      display: inline-flex;
+      animation: ticker 22s linear infinite;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.8rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 0 2rem;
+    }
+
+    .ticker-star {
+      color: var(--green);
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    /* ───── ABOUT SECTION ───── */
+    .about {
+      background: var(--cream);
+      padding: 7rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .about-text { flex: 1; max-width: 520px; }
+
+    .about-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .about-eyebrow::before {
+      content: '';
+      width: 32px;
+      height: 1.5px;
+      background: var(--green);
+    }
+
+    .about-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      line-height: 1.12;
+      color: var(--dark);
+      margin-bottom: 1.6rem;
+    }
+    .about-heading em {
+      font-style: italic;
+      color: var(--green);
+    }
+
+    .about-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.18rem;
+      line-height: 1.8;
+      color: #444;
+      margin-bottom: 2rem;
+    }
+
+    .about-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
+      text-decoration: none;
+      border-bottom: 1.5px solid var(--green);
+      padding-bottom: 2px;
+      transition: gap 0.2s;
+    }
+    .about-link:hover { gap: 1rem; }
+
+    .about-image-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 220px 220px;
+      gap: 12px;
+      max-width: 480px;
+    }
+
+    .about-img {
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ccc;
+    }
+    .about-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .about-img:hover img { transform: scale(1.06); }
+    .about-img.tall {
+      grid-row: span 2;
+    }
+
+    /* ───── MARQUEE DIVIDER ───── */
+    .marquee-divider {
+      background: var(--green);
+      overflow: hidden;
+      padding: 1.1rem 0;
+    }
+    .marquee-divider .ticker-track { animation: ticker 28s linear infinite; }
+    .marquee-divider .ticker-item {
+      color: rgba(255,255,255,0.75);
+    }
+    .marquee-divider .ticker-star { color: var(--pink); }
+
+    /* ───── MENU PREVIEW ───── */
+    .menu-section {
+      padding: 7rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .section-eyebrow::before {
+      content: '';
+      width: 28px; height: 1.5px;
+      background: var(--green);
+    }
+
+    .section-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      line-height: 1.1;
+      color: var(--dark);
+    }
+
+    .section-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green);
+      text-decoration: none;
+      border-bottom: 1.5px solid var(--green);
+      padding-bottom: 2px;
+      margin-bottom: 0.3rem;
+      transition: gap 0.2s;
+    }
+    .section-link:hover { gap: 0.9rem; }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .menu-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s;
+      cursor: pointer;
+    }
+    .menu-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.13);
+    }
+
+    .menu-card-img {
+      height: 200px;
+      overflow: hidden;
+      background: #e8e0d4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+
+    .menu-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .menu-card:hover .menu-card-img img { transform: scale(1.08); }
+
+    .menu-card-body { padding: 1.4rem; }
+
+    .menu-card-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.4rem;
+    }
+
+    .menu-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .menu-card-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: #777;
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+    }
+
+    .menu-card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .menu-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--dark);
+    }
+
+    .add-btn {
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.45rem 1.2rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .add-btn:hover {
+      background: #1e2d1e;
+      transform: scale(1.04);
+    }
+
+    /* ───── RESERVATION SECTION ───── */
+    .reserve-section {
+      background: var(--green);
+      padding: 7rem 2rem;
+    }
+
+    .reserve-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .reserve-left .section-eyebrow { color: var(--pink); }
+    .reserve-left .section-eyebrow::before { background: var(--pink); }
+
+    .reserve-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 1.4rem;
+    }
+
+    .reserve-left p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .reserve-details { display: flex; flex-direction: column; gap: 1rem; }
+
+    .reserve-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .reserve-detail-icon {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .reserve-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .field label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .field input, .field select, .field textarea {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: white;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.3); }
+    .field select option { background: var(--green2); color: white; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--pink);
+      background: rgba(255,255,255,0.1);
+    }
+    .field textarea { resize: none; }
+
+    .reserve-submit {
+      background: var(--pink);
+      color: var(--dark);
+      border: none;
+      border-radius: 50px;
+      padding: 1rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+      margin-top: 0.5rem;
+    }
+    .reserve-submit:hover {
+      background: #f090a0;
+      transform: translateY(-2px);
+    }
+
+    /* ───── REVIEWS ───── */
+    .reviews-section {
+      background: var(--cream);
+      padding: 7rem 2rem;
+    }
+    .reviews-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .reviews-header { text-align: center; margin-bottom: 3.5rem; }
+    .reviews-header .section-eyebrow { justify-content: center; }
+    .reviews-header .section-eyebrow::before { display: none; }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .review-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .review-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+    }
+
+    .review-stars { color: var(--pink); font-size: 0.85rem; margin-bottom: 1rem; letter-spacing: 0.1em; }
+
+    .review-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .review-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .review-name {
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
+      color: var(--dark);
+    }
+    .review-date {
+      font-size: 0.72rem;
+      color: #aaa;
+      letter-spacing: 0.06em;
+    }
+
+    /* ───── FOOTER ───── */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.65);
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-style: italic;
+      color: white;
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-brand-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .social-row { display: flex; gap: 0.8rem; }
+    .social-btn {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      text-decoration: none;
+    }
+    .social-btn:hover { border-color: var(--pink); background: rgba(244,167,176,0.1); }
+
+    .footer-col h4 {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-col ul a {
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--pink); }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+    }
+
+    /* ───── CART DRAWER ───── */
+    .cart-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: 380px;
+      background: white;
+      z-index: 201;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+      display: flex; flex-direction: column;
+    }
+    .cart-drawer.open { transform: translateX(0); }
+
+    .cart-head {
+      padding: 1.5rem 1.8rem;
+      border-bottom: 1px solid #eee;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .cart-head h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+    }
+    .cart-close {
+      background: none; border: none; font-size: 1.5rem;
+      cursor: pointer; color: #888; line-height: 1;
+    }
+    .cart-close:hover { color: var(--dark); }
+
+    .cart-items { flex: 1; overflow-y: auto; padding: 1.2rem 1.8rem; }
+
+    .cart-line {
+      display: flex; justify-content: space-between;
+      align-items: center; padding: 1rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .cart-line-name { font-size: 0.9rem; font-weight: 500; }
+    .cart-line-qty { font-size: 0.8rem; color: #888; margin-top: 2px; }
+    .cart-line-price { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+
+    .cart-empty {
+      text-align: center;
+      padding: 3rem 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      color: #bbb;
+    }
+
+    .cart-foot {
+      padding: 1.5rem 1.8rem;
+      border-top: 1px solid #eee;
+    }
+    .cart-total-row {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 1.2rem;
+    }
+    .cart-total-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+    .cart-total-amt { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+
+    .checkout-btn {
+      width: 100%;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 1rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .checkout-btn:hover { background: #1e2d1e; transform: translateY(-1px); }
+
+    /* ───── TOAST ───── */
+    .toast {
+      position: fixed;
+      bottom: 2rem; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--dark);
+      color: white;
+      padding: 0.8rem 1.8rem;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+      z-index: 300;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ───── DINING OPTIONS ───── */
+    .dining-options-section {
+      background: var(--green);
+      overflow: hidden;
+    }
+
+    /* Marquee */
+    .dining-marquee {
+      background: var(--green);
+      padding: 1.2rem 0;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .marquee-content {
+      display: flex;
+      gap: 2rem;
+      animation: marqueeScroll 20s linear infinite;
+      white-space: nowrap;
+    }
+
+    .marquee-content span {
+      color: var(--white);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      font-family: 'Jost', sans-serif;
+    }
+
+    .marquee-plus {
+      opacity: 0.4;
+    }
+
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Split layout */
+    .dining-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 85vh;
+    }
+
+    /* Left side - Text content */
+    .dining-left {
+      background: var(--green);
+      padding: 5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .dining-star {
+      font-size: 1.8rem;
+      color: var(--pink);
+      margin-bottom: 1rem;
+    }
+
+    .dining-heading {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(3rem, 5vw, 5rem);
+      color: var(--white);
+      line-height: 1;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+    }
+
+    .dining-text {
+      font-family: 'Jost', sans-serif;
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.7;
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+    }
+
+    .dining-icon-card {
+      width: 160px;
+      height: 160px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .dining-icon-card:hover {
+      transform: scale(1.05);
+    }
+
+    .dining-icon-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .dining-btn {
+      border: 1.5px solid rgba(255,255,255,0.85);
+      border-radius: 50px;
+      padding: 0.85rem 2.5rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dining-btn:hover {
+      background: var(--white);
+      color: var(--green);
+      border-color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+    }
+
+    /* Right side - Image */
+    .dining-right {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dining-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.7);
+      transition: transform 0.5s ease;
+    }
+
+    .dining-right:hover .dining-image {
+      transform: scale(1.05);
+    }
+
+    .dining-btn-overlay {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .dining-btn-overlay:hover {
+      background: var(--white);
+      color: var(--dark);
+    }
+
+
+
+
+
+    /* ───── REFINED SCROLL ANIMATION ───── */
+.scroll-reveal-section {
+  position: relative;
+  background: var(--white); /* Video uses white bg for this part */
+  height: 300vh; /* Long scroll area to "play" the animation */
+}
+
+.scroll-reveal-container {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.scroll-text-fixed {
+  z-index: 10;
+  text-align: center;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.scroll-heading {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  color: var(--dark);
+  line-height: 1.1;
+}
+
+.parallax-img {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  opacity: 0;
+  transition: transform 0.1s linear; /* Smooth movement */
+}
+
+.parallax-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Specific Positions to match the video */
+.img-1 { width: 320px; height: 220px; top: 15%; left: 10%; }
+.img-2 { width: 180px; height: 180px; top: 10%; left: 45%; }
+.img-3 { width: 280px; height: 380px; top: 15%; right: 8%; }
+.img-4 { width: 250px; height: 300px; bottom: 10%; left: 15%; }
+.img-5 { width: 350px; height: 240px; bottom: 15%; right: 12%; }
+
+@media (max-width: 768px) {
+  .parallax-img { width: 140px !important; height: 140px !important; }
+}
+/* Responsive */
+@media (max-width: 900px) {
+  .scroll-img-1 {
+    width: 320px;
+    height: 270px;
+    left: 5%;
+  }
+  
+  .scroll-img-2 {
+    width: 240px;
+    height: 200px;
+  }
+  
+  .scroll-img-3 {
+    width: 300px;
+    height: 260px;
+    right: 5%;
+  }
+  
+  .scroll-heading {
+    font-size: 3.5rem;
+  }
+  
+  .scroll-quote-mark,
+  .scroll-quote-mark-end {
+    font-size: 6rem;
+  }
+  
+  .scroll-quote-mark {
+    top: -2rem;
+    left: -2rem;
+  }
+  
+  .scroll-quote-mark-end {
+    bottom: -2.5rem;
+    right: -2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .scroll-reveal-section {
+    min-height: 120vh;
+  }
+  
+  .scroll-reveal-container {
+    min-height: 120vh;
+  }
+  
+  .scroll-img-1 {
+    width: 200px;
+    height: 170px;
+    left: 2%;
+    top: 15%;
+  }
+  
+  .scroll-img-2 {
+    width: 160px;
+    height: 140px;
+    top: 12%;
+  }
+  
+  .scroll-img-3 {
+    width: 190px;
+    height: 160px;
+    right: 2%;
+    top: 18%;
+  }
+  
+  .scroll-heading {
+    font-size: 2.2rem;
+  }
+  
+  .scroll-quote-mark,
+  .scroll-quote-mark-end {
+    font-size: 4rem;
+  }
+  
+  .scroll-quote-mark {
+    top: -1.5rem;
+    left: -1rem;
+  }
+  
+  .scroll-quote-mark-end {
+    bottom: -2rem;
+    right: -1rem;
+  }
+  
+  .scroll-text-fixed {
+    padding: 2rem 1rem;
+  }
+}
+
+
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <div class="nav-left">
+    <a href="#menu">Menu</a>
+    <a href="#order">Order Online</a>
+    <a href="#reservations">Reservations</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <a href="#" class="nav-logo">Barfi</a>
+
+  <div class="nav-right">
+    <a href="#reservations" class="nav-order-btn">Order Now</a>
+    <a href="#" style="color:rgba(255,255,255,0.75);font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:500;letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;">Log In</a>
+    <div class="cart-icon" id="cartBtn">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" id="cartCount">0</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <!-- Using Unsplash food photos -->
+    <div class="hero-bg-cell"><img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&q=80" alt="food" /></div>
+    <div class="hero-bg-cell"><img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80" alt="food" /></div>
+    <div class="hero-bg-cell"><img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&q=80" alt="food" /></div>
+    <div class="hero-bg-cell"><img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&q=80" alt="food" /></div>
+    <div class="hero-bg-cell"><img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80" alt="food" /></div>
+    <div class="hero-bg-cell"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80" alt="food" /></div>
+  </div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <h1 class="hero-title">
+      <span class="line1">BARFI</span>
+      <span class="line2">The Food Magician</span>
+    </h1>
+    <p class="hero-sub">
+      Bar <span class="spark">✦</span> Restaurant <span class="spark">✦</span> Café
+    </p>
+    <div class="hero-buttons">
+      <a href="#order" class="hero-btn hero-btn-outline">Order Online</a>
+      <a href="#reservations" class="hero-btn hero-btn-fill">Reservations</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── PINK TICKER ── -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <!-- repeated twice for seamless loop -->
+    <span class="ticker-item"><span class="ticker-star">✦</span> Authentic Flavours <span class="ticker-star">✦</span> Bandel, Hooghly <span class="ticker-star">✦</span> Bar · Restaurant · Café <span class="ticker-star">✦</span> Open Daily 11am – 11pm <span class="ticker-star">✦</span> Dine-In · Takeaway · Delivery <span class="ticker-star">✦</span> Reserve a Table Today <span class="ticker-star">✦</span></span>
+    <span class="ticker-item"><span class="ticker-star">✦</span> Authentic Flavours <span class="ticker-star">✦</span> Bandel, Hooghly <span class="ticker-star">✦</span> Bar · Restaurant · Café <span class="ticker-star">✦</span> Open Daily 11am – 11pm <span class="ticker-star">✦</span> Dine-In · Takeaway · Delivery <span class="ticker-star">✦</span> Reserve a Table Today <span class="ticker-star">✦</span></span>
+  </div>
+</div>
+
+<!-- ── ABOUT ── -->
+<div id="about">
+  <div class="about">
+    <div class="about-text">
+      <div class="about-eyebrow">Our Story</div>
+      <h2 class="about-heading">Where Every Dish<br>is a <em>Magical</em> Act</h2>
+      <p class="about-body">
+        Nestled in the historic heart of Bandel, Hooghly, Barfi - The Food Magician is more than a restaurant — it's an experience. We blend the soul of Bengali culinary tradition with bold global flavours, conjuring dishes that surprise, delight, and linger long after the last bite.
+      </p>
+      <p class="about-body">
+        Every ingredient is sourced fresh daily, every recipe crafted with intention, and every plate presented as a small act of wonder. Welcome to our table.
+      </p>
+      <a href="#menu" class="about-link">Explore Our Menu →</a>
+    </div>
+    <div class="about-image-grid">
+      <div class="about-img tall">
+        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80" alt="restaurant" />
+      </div>
+      <div class="about-img">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80" alt="food" />
+      </div>
+      <div class="about-img">
+        <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80" alt="food" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GREEN MARQUEE DIVIDER ── -->
+<div class="marquee-divider">
+  <div class="ticker-track" style="animation-duration:30s;">
+    <span class="ticker-item"><span class="ticker-star">✦</span> Butter Chicken <span class="ticker-star">✦</span> Mutton Biryani <span class="ticker-star">✦</span> Paneer Tikka <span class="ticker-star">✦</span> Lava Cake <span class="ticker-star">✦</span> Fresh Mocktails <span class="ticker-star">✦</span> Fish Curry Bengali Style <span class="ticker-star">✦</span> Chicken Lollipop <span class="ticker-star">✦</span> Pasta Alfredo <span class="ticker-star">✦</span></span>
+    <span class="ticker-item"><span class="ticker-star">✦</span> Butter Chicken <span class="ticker-star">✦</span> Mutton Biryani <span class="ticker-star">✦</span> Paneer Tikka <span class="ticker-star">✦</span> Lava Cake <span class="ticker-star">✦</span> Fresh Mocktails <span class="ticker-star">✦</span> Fish Curry Bengali Style <span class="ticker-star">✦</span> Chicken Lollipop <span class="ticker-star">✦</span> Pasta Alfredo <span class="ticker-star">✦</span></span>
+  </div>
+</div>
+
+<!-- ── MENU ── -->
+<section class="menu-section" id="menu">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">Our Menu</div>
+      <h2 class="section-heading">Signature Dishes</h2>
+    </div>
+    <a href="#menu" class="section-link">View Full Menu →</a>
+  </div>
+
+  <div class="menu-grid" id="order">
+    <div class="menu-card">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600&q=80" alt="Butter Chicken" />
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-tag">Main Course</div>
+        <div class="menu-card-name">Butter Chicken</div>
+        <div class="menu-card-desc">Tender chicken in a rich, velvety tomato-cream gravy with aromatic spices.</div>
+        <div class="menu-card-foot">
+          <span class="menu-price">₹350</span>
+          <button class="add-btn" onclick="addToCart('Butter Chicken', 350)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-card">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1691170979035-27e5ec943205?q=80&w=1011&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Mutton Biryani" />
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-tag">Biryani</div>
+        <div class="menu-card-name">Mutton Dum Biryani</div>
+        <div class="menu-card-desc">Slow-cooked fragrant basmati layered with succulent mutton and saffron.</div>
+        <div class="menu-card-foot">
+          <span class="menu-price">₹380</span>
+          <button class="add-btn" onclick="addToCart('Mutton Dum Biryani', 380)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-card">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&q=80" alt="Pizza" />
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-tag">Pizza</div>
+        <div class="menu-card-name">Wood-Fired Margherita</div>
+        <div class="menu-card-desc">Classic tomato base, fresh mozzarella, and basil on a blistered thin crust.</div>
+        <div class="menu-card-foot">
+          <span class="menu-price">₹320</span>
+          <button class="add-btn" onclick="addToCart('Wood-Fired Margherita', 320)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-card">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=600&q=80" alt="Pasta" />
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-tag">Continental</div>
+        <div class="menu-card-name">Pasta Alfredo</div>
+        <div class="menu-card-desc">Silky parmesan cream sauce tossed with perfectly al-dente fettuccine.</div>
+        <div class="menu-card-foot">
+          <span class="menu-price">₹280</span>
+          <button class="add-btn" onclick="addToCart('Pasta Alfredo', 280)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-card">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80" alt="Lava Cake" />
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-tag">Dessert</div>
+        <div class="menu-card-name">Chocolate Lava Cake</div>
+        <div class="menu-card-desc">Warm dark chocolate cake with a molten centre, served with vanilla bean ice cream.</div>
+        <div class="menu-card-foot">
+          <span class="menu-price">₹180</span>
+          <button class="add-btn" onclick="addToCart('Chocolate Lava Cake', 180)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-card">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80" alt="Mocktail" />
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-tag">Beverages</div>
+        <div class="menu-card-name">Tropical Mocktail</div>
+        <div class="menu-card-desc">A refreshing blend of mango, passion fruit, mint, and lime soda.</div>
+        <div class="menu-card-foot">
+          <span class="menu-price">₹150</span>
+          <button class="add-btn" onclick="addToCart('Tropical Mocktail', 150)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DINING OPTIONS ── -->
+<section class="dining-options-section">
+  <!-- Scrolling marquee -->
+  <div class="dining-marquee">
+    <div class="marquee-content">
+      <span>FAMILY RESTAURANT</span>
+      <span class="marquee-plus">+</span>
+      <span>FAMILY RESTAURANT</span>
+      <span class="marquee-plus">+</span>
+      <span>FAMILY RESTAURANT</span>
+      <span class="marquee-plus">+</span>
+      <span>FAMILY RESTAURANT</span>
+      <span class="marquee-plus">+</span>
+      <span>FAMILY RESTAURANT</span>
+      <span class="marquee-plus">+</span>
+      <span>FAMILY RESTAURANT</span>
+      <span class="marquee-plus">+</span>
+      <span>FAMILY RESTAURANT</span>
+      <span class="marquee-plus">+</span>
+      <span>FAMILY RESTAURANT</span>
+      <span class="marquee-plus">+</span>
+    </div>
+  </div>
+
+  <!-- Split content -->
+  <div class="dining-split">
+    <!-- Left: Text content -->
+    <div class="dining-left">
+      <div class="dining-star">✦</div>
+      <h2 class="dining-heading">DINING OPTIONS</h2>
+      <p class="dining-text">
+        Immerse yourself in our warm, vibrant ambiance where every meal becomes a memorable experience. Our attentive staff and enchanting atmosphere make every visit special.
+      </p>
+      <div class="dining-icon-card">
+        <img src="https://images.unsplash.com/photo-1599305090598-fe179d501227?w=300" alt="Takeaway" class="dining-icon-img">
+      </div>
+      <a href="#order" class="dining-btn">ORDER ONLINE</a>
+    </div>
+
+    <!-- Right: Video/Image -->
+    <div class="dining-right">
+      <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200" alt="Restaurant ambiance" class="dining-image">
+      <a href="#reservations" class="dining-btn dining-btn-overlay">MAKE A RESERVATION</a>
+    </div>
+  </div>
+</section>
+
+
+<section class="scroll-reveal-section" id="occasions">
+  <div class="scroll-reveal-container">
+    
+    <div class="scroll-text-fixed">
+      <h2 class="scroll-heading">
+        "The perfect place for any occasion"
+      </h2>
+    </div>
+
+    <div class="scroll-bg-images">
+      <div class="parallax-img img-1">
+        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600" alt="Dining">
+      </div>
+      <div class="parallax-img img-2">
+        <img src="https://images.unsplash.com/photo-1541529086526-db283c563270?w=400" alt="Dish">
+      </div>
+      <div class="parallax-img img-3">
+        <img src="https://images.unsplash.com/photo-1536935338788-846bb9981813?w=500" alt="Drink">
+      </div>
+      <div class="parallax-img img-4">
+        <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500" alt="Pasta">
+      </div>
+      <div class="parallax-img img-5">
+        <img src="https://images.unsplash.com/photo-1525610553991-2bede1a236e2?w=600" alt="Family">
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── RESERVATION ── -->
+<section class="reserve-section" id="reservations">
+  <div class="reserve-inner">
+    <div class="reserve-left">
+      <div class="section-eyebrow">Reservations</div>
+      <h2>Reserve Your Table</h2>
+      <p>Planning something special? Book your table in advance and let us craft the perfect evening for you — whether it's an intimate dinner, a family celebration, or a corporate lunch.</p>
+      <div class="reserve-details">
+        <div class="reserve-detail">
+          <div class="reserve-detail-icon">📍</div>
+          <span>Bandel, Hooghly, West Bengal</span>
+        </div>
+        <div class="reserve-detail">
+          <div class="reserve-detail-icon">⏰</div>
+          <span>Open Daily · 11:00 AM – 11:00 PM</span>
+        </div>
+        <div class="reserve-detail">
+          <div class="reserve-detail-icon">📞</div>
+          <span>+91 98765 43210</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="reserve-form" onsubmit="handleReservation(event)">
+      <div class="form-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" placeholder="Raj" required />
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" placeholder="Kumar" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Phone</label>
+          <input type="tel" placeholder="+91 XXXXX XXXXX" required />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" placeholder="you@email.com" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="resDate" required />
+        </div>
+        <div class="field">
+          <label>Time</label>
+          <input type="time" required />
+        </div>
+      </div>
+      <div class="field">
+        <label>Number of Guests</label>
+        <select required>
+          <option value="">Select…</option>
+          <option>1 Guest</option>
+          <option>2 Guests</option>
+          <option>3 Guests</option>
+          <option>4 Guests</option>
+          <option>5 Guests</option>
+          <option>6+ Guests</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Special Requests</label>
+        <textarea rows="3" placeholder="Dietary requirements, occasion, seating preference…"></textarea>
+      </div>
+      <button type="submit" class="reserve-submit">Confirm Reservation</button>
+    </form>
+  </div>
+</section>
+
+<!-- ── REVIEWS ── -->
+<section class="reviews-section" id="reviews">
+  <div class="reviews-inner">
+    <div class="reviews-header">
+      <div class="section-eyebrow">Testimonials</div>
+      <h2 class="section-heading" style="font-family:'Playfair Display',serif;font-size:clamp(2rem,3.5vw,2.8rem);">What Our Guests Say</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Barfi truly lives up to its name — the food magician! The butter chicken was heavenly and the ambiance was perfect for our anniversary. Staff made us feel so special."</p>
+        <div class="review-author">
+          <div class="review-avatar">P</div>
+          <div>
+            <div class="review-name">Priya Sharma</div>
+            <div class="review-date">Dine-In · 2 days ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Best restaurant in Bandel, hands down. The mutton biryani is authentic and aromatic. Their delivery is always on time and the food arrives piping hot!"</p>
+        <div class="review-author">
+          <div class="review-avatar">A</div>
+          <div>
+            <div class="review-name">Amit Kumar</div>
+            <div class="review-date">Home Delivery · 1 week ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Celebrated my daughter's birthday here. The team decorated the table beautifully and the food was outstanding. The chocolate lava cake is absolutely divine!"</p>
+        <div class="review-author">
+          <div class="review-avatar">R</div>
+          <div>
+            <div class="review-name">Rajesh Mukherjee</div>
+            <div class="review-date">Dine-In · 2 weeks ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer id="contact">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">Barfi</div>
+      <div class="footer-brand-sub">The Food Magician<br>Bandel, Hooghly, West Bengal<br>Where every plate is a small act of wonder.</div>
+      <div class="social-row">
+        <a class="social-btn" href="#">f</a>
+        <a class="social-btn" href="#">in</a>
+        <a class="social-btn" href="#">ig</a>
+        <a class="social-btn" href="#">yt</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="#reservations">Reserve a Table</a></li>
+        <li><a href="#order">Order Online</a></li>
+        <li><a href="#">Catering</a></li>
+        <li><a href="#">Private Events</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+        <li><a href="/cdn-cgi/l/email-protection#2c45424a436c4e4d5e4a45024f4341"><span class="__cf_email__" data-cfemail="422b2c242d02202330242b6c212d2f">[email&#160;protected]</span></a></li>
+        <li><a href="#">Bandel, Hooghly</a></li>
+        <li><a href="#">Open 11am – 11pm</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Barfi – The Food Magician. All rights reserved.</span>
+    <span>Bandel, Hooghly, West Bengal</span>
+  </div>
+</footer>
+
+<!-- ── CART OVERLAY + DRAWER ── -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3>Your Cart</h3>
+    <button class="cart-close" onclick="closeCart()">×</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">Your cart is empty.</div>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-amt">₹<span id="cartTotal">0</span></span>
+    </div>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ── Cart ──
+  let cart = [];
+
+  function addToCart(name, price) {
+    const existing = cart.find(i => i.name === name);
+    if (existing) existing.qty++;
+    else cart.push({ name, price, qty: 1 });
+    renderCart();
+    showToast(`✦ ${name} added to cart`);
+  }
+
+  function renderCart() {
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+    document.getElementById('cartCount').textContent = count;
+
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    document.getElementById('cartTotal').textContent = total;
+
+    const container = document.getElementById('cartItems');
+    if (cart.length === 0) {
+      container.innerHTML = '<div class="cart-empty">Your cart is empty.</div>';
+      return;
+    }
+    container.innerHTML = cart.map(i => `
+      <div class="cart-line">
+        <div>
+          <div class="cart-line-name">${i.name}</div>
+          <div class="cart-line-qty">× ${i.qty}</div>
+        </div>
+        <div class="cart-line-price">₹${i.price * i.qty}</div>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('cartBtn').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('cartDrawer').classList.add('open');
+    document.getElementById('cartOverlay').classList.add('open');
+  });
+
+  function closeCart() {
+    document.getElementById('cartDrawer').classList.remove('open');
+    document.getElementById('cartOverlay').classList.remove('open');
+  }
+
+  function checkout() {
+    if (cart.length === 0) { showToast('Your cart is empty!'); return; }
+    showToast('🎉 Order placed! We\'ll contact you shortly.');
+    cart = [];
+    renderCart();
+    closeCart();
+  }
+
+  // ── Reservation ──
+  function handleReservation(e) {
+    e.preventDefault();
+    showToast('✦ Table reserved! Confirmation on its way.');
+    e.target.reset();
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── Set min date ──
+  document.getElementById('resDate').min = new Date().toISOString().split('T')[0];
+
+  // ── Scroll: darken nav ──
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    nav.style.background = window.scrollY > 60
+      ? 'rgba(43,61,43,0.98)'
+      : 'var(--green)';
+  });
+
+  // ── Smooth scroll ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+
+window.addEventListener('scroll', () => {
+  const section = document.querySelector('.scroll-reveal-section');
+  const container = document.querySelector('.scroll-reveal-container');
+  const images = document.querySelectorAll('.parallax-img');
+  
+  if (!section) return;
+
+  const sectionTop = section.offsetTop;
+  const sectionHeight = section.offsetHeight;
+  const viewportHeight = window.innerHeight;
+  const scrollY = window.scrollY;
+
+  // Calculate progress: 0 at start of section, 1 at the end
+  let progress = (scrollY - sectionTop) / (sectionHeight - viewportHeight);
+  progress = Math.max(0, Math.min(1, progress));
+
+  images.forEach((img, index) => {
+    // Each image has a slightly different trigger point and speed
+    const delay = index * 0.1;
+    const imgProgress = Math.max(0, Math.min(1, (progress - delay) * 2));
+
+    // Opacity: Fade in then fade out
+    let opacity = 0;
+    if (imgProgress > 0 && imgProgress < 0.8) opacity = 1;
+    else if (imgProgress >= 0.8) opacity = 1 - (imgProgress - 0.8) * 5;
+
+    // Movement: Each image drifts upward at a different speed
+    const speed = [60, 100, 80, 120, 90]; // pixels to move
+    const yOffset = (1 - imgProgress) * speed[index];
+
+    img.style.opacity = opacity;
+    img.style.transform = `translateY(${yOffset}px)`;
+  });
+});
+
+</script>
+</body>
+</html>
